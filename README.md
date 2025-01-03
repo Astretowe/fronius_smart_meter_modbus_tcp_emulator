@@ -1,8 +1,11 @@
 # fronius_smart_meter_modbus_tcp_emulator
-Emulate a Fronius  Modbus TCP Smart Meter 
+Emulate a Fronius Modbus TCP Smart Meter in a docker container.
 
-Code is under develoment!
+The emulator can provide a Modbus TCP server interface which satisfies the requirements of a Fronius inverter.
+The input data is provided via MQTT.
+For configuration, please see the docker-compose file.
 
-Just enter MQTT server data and send CONSUMPTION, TOTAL_IMPORT in Wh and TOTAL_EXPORT in Wh to the configured topics.
-
-Was tested with fronius gen24 as primary counter
+Usage:
+- Pull the repo to a local folder.
+- Adjust compose file.
+- docker compose up -d --build fronius-sim
