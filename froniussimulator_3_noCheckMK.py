@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 """
-Simulates a Fronius Smart Meter for providing necessary 
-information to inverters (e.g. Gen24). 
+Simulates a Fronius Smart Meter for providing necessary
+information to inverters (e.g. Gen24).
 Necessary information is provied via MQTT and translated to MODBUS TCP
 
 Based on
@@ -77,9 +77,9 @@ mqttconf = {
 MQTT_TOPIC_CONSUMPTION  = "FSM/Leistung" #Import Watts
 MQTT_TOPIC_TOTAL_IMPORT = "FSM/Netzbezug_total" #Import Wh
 MQTT_TOPIC_TOTAL_EXPORT = "FSM/Netzeinspeisung_total" #Export WH
-#MQTT_TOPIC_TIME = "FSM/Time" #Timestamp for Check MK 
+#MQTT_TOPIC_TIME = "FSM/Time" #Timestamp for Check MK
 
-corrfactor = 1000 
+corrfactor = 1000
 i_corrfactor = int(corrfactor)
 
 modbus_port = 502
@@ -141,10 +141,10 @@ def on_message(client, userdata, message):
 
     print("Received message '" + str(message.payload) + "' on topic '"
         + message.topic + "' with QoS " + str(message.qos))
-    
+
     if not isfloat(message.payload):
         return
-    
+
     lock.acquire()
 
     if message.topic == MQTT_TOPIC_CONSUMPTION:
@@ -300,7 +300,7 @@ def run_updating_server():
                 0,0,0,0,0,0,0,0,                                       #Options N/A
                 0,0,0,0,0,0,0,0,                                       #Software Version  N/A
                 48,48,48,48,48,48,48,49,0,0,0,0,0,0,0,0,               #Serial Number: 00000
-                240],                                                  #Modbus TCP Address: 
+                240],                                                  #Modbus TCP Address:
         40070: [213],
         40071: [124],
         40072: [0,0,0,0,0,0,0,0,0,0,
