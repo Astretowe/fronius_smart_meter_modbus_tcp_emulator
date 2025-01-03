@@ -12,8 +12,14 @@ services:
       - MQTT_HOST=1.2.3.4
       - MQTT_PORT=1883
       - MQTT_TOPIC_CURRENT_POWER=smart-meter-emulation/power
+      - MQTT_TOPIC_CURRENT_POWER_L1=smart-meter-emulation/power_l1
+      - MQTT_TOPIC_CURRENT_POWER_L2=smart-meter-emulation/power_l2
+      - MQTT_TOPIC_CURRENT_POWER_L3=smart-meter-emulation/power_l3
       - MQTT_TOPIC_TOTAL_IMPORT=smart-meter-emulation/import
       - MQTT_TOPIC_TOTAL_EXPORT=smart-meter-emulation/export
       - CORRECTION_FACTOR_CURRENT_POWER=1
+      - CORRECTION_FACTOR_CURRENT_POWER_L1=1
+      - CORRECTION_FACTOR_CURRENT_POWER_L2=1
+      - CORRECTION_FACTOR_CURRENT_POWER_L3=1
       - CORRECTION_FACTOR_TOTAL_IMPORT=1000
       - CORRECTION_FACTOR_TOTAL_EXPORT=1000

@@ -173,19 +173,28 @@ def update_server_context(input_context):
 
     # Applying correction factor
     adjusted_power = float(current_power) * correction_factor_current_power
+    adjusted_power_l1 = float(current_power_l1) * correction_factor_current_power_l1
+    adjusted_power_l2 = float(current_power_l2) * correction_factor_current_power_l2
+    adjusted_power_l3 = float(current_power_l3) * correction_factor_current_power_l3
     adjusted_import = float(total_import) * correction_factor_total_import
     adjusted_export = float(total_export) * correction_factor_total_export
 
     if debug:
         print("----------------------")
         print("Adjusted values for register update:")
-        print("Power: " + "{0:0.2f}".format(adjusted_power))
+        print("Power (Total): " + "{0:0.2f}".format(adjusted_power))
+        print("Power (L1): " + "{0:0.2f}".format(adjusted_power_l1))
+        print("Power (L2): " + "{0:0.2f}".format(adjusted_power_l2))
+        print("Power (L3): " + "{0:0.2f}".format(adjusted_power_l3))
         print("Import: " + "{0:0.2f}".format(adjusted_import))
         print("Export: " + "{0:0.2f}".format(adjusted_export))
         print("----------------------")
 
     # Converting smart meter values into Modbus registers
     power_int1, power_int2 = to_two_bytes(adjusted_power)
+    power_l1_int1, power_l1_int2 = to_two_bytes(adjusted_power_l1)
+    power_l2_int1, power_l2_int2 = to_two_bytes(adjusted_power_l2)
+    power_l3_int1, power_l3_int2 = to_two_bytes(adjusted_power_l3)
     import_int1, import_int2 = to_two_bytes(adjusted_import)
     export_int1, export_int2 = to_two_bytes(adjusted_export)
 
@@ -203,9 +212,9 @@ def update_server_context(input_context):
               0, 0,  # Voltage - Phase L1 to L3 [V]
               0, 0,  # AC Frequency [Hz]
               power_int1, 0,  # AC Power value (Total) [W] ==> Second hex word not needed
-              0, 0,  # AC Power Value L1 [W]
-              0, 0,  # AC Power Value L2 [W]
-              0, 0,  # AC Power Value L3 [W]
+              power_l1_int1, 0,  # AC Power Value L1 [W]
+              power_l2_int1, 0,  # AC Power Value L2 [W]
+              power_l3_int1, 0,  # AC Power Value L3 [W]
               0, 0,  # AC Apparent Power [VA]
               0, 0,  # AC Apparent Power L1 [VA]
               0, 0,  # AC Apparent Power L2 [VA]
@@ -258,12 +267,19 @@ mqtt_host = os.environ['MQTT_HOST']
 mqtt_port = int(os.environ['MQTT_PORT'])
 
 mqtt_topic_current_power = os.environ['MQTT_TOPIC_CURRENT_POWER']  # Current Watt
+mqtt_topic_current_power_l1 = os.environ['MQTT_TOPIC_CURRENT_POWER_L1']  # Current Watt L1
+mqtt_topic_current_power_l2 = os.environ['MQTT_TOPIC_CURRENT_POWER_L2']  # Current Watt L2
+mqtt_topic_current_power_l3 = os.environ['MQTT_TOPIC_CURRENT_POWER_L3']  # Current Watt L3
 mqtt_topic_total_import = os.environ['MQTT_TOPIC_TOTAL_IMPORT']  # Import Wh
 mqtt_topic_total_export = os.environ['MQTT_TOPIC_TOTAL_EXPORT']  # Export Wh
 
-correction_factor_current_power = float(os.environ['CORRECTION_FACTOR_CURRENT_POWER'])  # adjustment factor if input data is not correctly scaled.
-correction_factor_total_import = float(os.environ['CORRECTION_FACTOR_TOTAL_IMPORT'])  # adjustment factor if input data is not correctly scaled.
-correction_factor_total_export = float(os.environ['CORRECTION_FACTOR_TOTAL_EXPORT'])  # adjustment factor if input data is not correctly scaled.
+# adjustment factors if input data is not correctly scaled.
+correction_factor_current_power = float(os.environ['CORRECTION_FACTOR_CURRENT_POWER'])
+correction_factor_current_power_l1 = float(os.environ['CORRECTION_FACTOR_CURRENT_POWER_L1'])
+correction_factor_current_power_l2 = float(os.environ['CORRECTION_FACTOR_CURRENT_POWER_L2'])
+correction_factor_current_power_l3 = float(os.environ['CORRECTION_FACTOR_CURRENT_POWER_L3'])
+correction_factor_total_import = float(os.environ['CORRECTION_FACTOR_TOTAL_IMPORT'])
+correction_factor_total_export = float(os.environ['CORRECTION_FACTOR_TOTAL_EXPORT'])
 
 serial_number = os.environ['SERIAL_NUMBER'] # 8 digit serial number
 serial_number = serial_number[:8].rjust(8, "0") # make sure we have exactly 8 digits.
@@ -283,6 +299,9 @@ print("MQTT_TOPIC_TOTAL_IMPORT: " + mqtt_topic_total_import)
 print("MQTT_TOPIC_TOTAL_EXPORT: " + mqtt_topic_total_export)
 print("----------------------")
 print("CORRECTION_FACTOR_CURRENT_POWER: " + "{0:0.2f}".format(correction_factor_current_power))
+print("CORRECTION_FACTOR_CURRENT_POWER_L1: " + "{0:0.2f}".format(correction_factor_current_power_l1))
+print("CORRECTION_FACTOR_CURRENT_POWER_L2: " + "{0:0.2f}".format(correction_factor_current_power_l2))
+print("CORRECTION_FACTOR_CURRENT_POWER_L3: " + "{0:0.2f}".format(correction_factor_current_power_l3))
 print("CORRECTION_FACTOR_TOTAL_IMPORT: " + "{0:0.2f}".format(correction_factor_total_import))
 print("CORRECTION_FACTOR_TOTAL_EXPORT: " + "{0:0.2f}".format(correction_factor_total_export))
 print("----------------------")
@@ -295,6 +314,9 @@ server_started = False
 last_message_received = datetime.datetime.now()
 
 current_power = "0"
+current_power_l1 = "0"
+current_power_l2 = "0"
+current_power_l3 = "0"
 total_export = "0"
 total_import = "0"
 
