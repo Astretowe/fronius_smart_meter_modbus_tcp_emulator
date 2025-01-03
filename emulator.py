@@ -111,6 +111,26 @@ def to_two_bytes(input_value):
         return int(hex_string[2:6], 16), int(hex_string[6:10], 16)
 
 
+"""Set up a mqtt client instance."""
+def setup_mqtt():
+    mqtt_client = mqtt.Client("SmartMeter", clean_session=True)
+
+    mqtt_client.on_disconnect = mqtt_on_disconnect
+    mqtt_client.on_connect = mqtt_on_connect
+    mqtt_client.on_message = mqtt_on_message
+
+    if mqtt_username and mqtt_password:
+        mqtt_client.username_pw_set(mqtt_username, mqtt_password)
+
+    mqtt_client.connect(mqtt_host, mqtt_port, 60)
+
+    mqtt_client.subscribe(mqtt_topic_current_power)
+    mqtt_client.subscribe(mqtt_topic_total_import)
+    mqtt_client.subscribe(mqtt_topic_total_export)
+
+    return mqtt_client
+
+
 """Check connection state and start / stop the modbus server.
 
 This will allow us to better communicate the "smart meter" state to whoever is requesting data.
@@ -272,22 +292,8 @@ current_power = "0"
 total_export = "0"
 total_import = "0"
 
-mqtt_client = mqtt.Client("SmartMeter", clean_session=True)
-
-mqtt_client.on_disconnect = mqtt_on_disconnect
-mqtt_client.on_connect = mqtt_on_connect
-mqtt_client.on_message = mqtt_on_message
-
-if mqtt_username and mqtt_password:
-    mqtt_client.username_pw_set(mqtt_username, mqtt_password)
-
-mqtt_client.connect(mqtt_host, mqtt_port, 60)
-
-mqtt_client.subscribe(mqtt_topic_current_power)
-mqtt_client.subscribe(mqtt_topic_total_import)
-mqtt_client.subscribe(mqtt_topic_total_export)
 mqtt_connected = False
-
+mqtt_client = setup_mqtt()
 mqtt_client.loop_start()
 
 values_ready = False
