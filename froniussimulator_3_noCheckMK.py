@@ -14,27 +14,14 @@ https://www.photovoltaikforum.com/thread/185108-fronius-smart-meter-tcp-protokol
 import threading
 import struct
 import time
-import json
-import getopt
-import sys
-import socket
-import signal
-import os
 
-from pymodbus.version import version
-from pymodbus.device import ModbusDeviceIdentification
-from pymodbus.datastore import ModbusSequentialDataBlock
 from pymodbus.datastore import ModbusSparseDataBlock
 from pymodbus.datastore import ModbusSlaveContext
 from pymodbus.datastore import ModbusServerContext
 from pymodbus.server import StartTcpServer
-from pymodbus.transaction import ModbusAsciiFramer
-from pymodbus.transaction import ModbusBinaryFramer
 from pymodbus.transaction import ModbusSocketFramer
-from pymodbus.transaction import ModbusTlsFramer
 
 import paho.mqtt.client as mqtt
-import paho.mqtt.subscribe as subscribe
 
 ###############################################################
 # Timer Class
