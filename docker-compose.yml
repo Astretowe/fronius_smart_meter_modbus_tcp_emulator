@@ -6,6 +6,7 @@ services:
     environment:
       - DEBUG=False
       - PYTHONUNBUFFERED=1 # enable application output
+      - SERIAL_NUMBER=00000000
       - MQTT_USERNAME=""
       - MQTT_PASSWORD=""
       - MQTT_HOST=1.2.3.4

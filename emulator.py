@@ -247,6 +247,8 @@ print("Application startup.")
 # seems to be a workaround for some issue I didn't bother to actually investigate.
 thread_pool_ref = concurrent.futures.ThreadPoolExecutor
 
+modbus_port = 502  # hardcoded since we can re-map it via docker.
+
 # get configuration from docker environment.
 debug = os.environ['DEBUG'].lower() == "true"
 
@@ -263,7 +265,9 @@ correction_factor_current_power = float(os.environ['CORRECTION_FACTOR_CURRENT_PO
 correction_factor_total_import = float(os.environ['CORRECTION_FACTOR_TOTAL_IMPORT'])  # adjustment factor if input data is not correctly scaled.
 correction_factor_total_export = float(os.environ['CORRECTION_FACTOR_TOTAL_EXPORT'])  # adjustment factor if input data is not correctly scaled.
 
-modbus_port = 502  # hardcoded since we can re-map it via docker.
+serial_number = os.environ['SERIAL_NUMBER'] # 8 digit serial number
+serial_number = serial_number[:8].rjust(8, "0") # make sure we have exactly 8 digits.
+
 
 print("Using config from env:")
 print("----------------------")
@@ -281,6 +285,8 @@ print("----------------------")
 print("CORRECTION_FACTOR_CURRENT_POWER: " + "{0:0.2f}".format(correction_factor_current_power))
 print("CORRECTION_FACTOR_TOTAL_IMPORT: " + "{0:0.2f}".format(correction_factor_total_import))
 print("CORRECTION_FACTOR_TOTAL_EXPORT: " + "{0:0.2f}".format(correction_factor_total_export))
+print("----------------------")
+print("SERIAL_NUMBER: " + serial_number)
 print("----------------------")
 
 lock = threading.Lock()
@@ -319,7 +325,7 @@ data_block = ModbusSparseDataBlock({
             ord("S"), ord("m"), ord("a"), ord("r"), ord("t"), ord(" "), ord("M"), ord("e"), ord("t"), ord("e"), ord("r"), ord(" "), ord("6"), ord("3"), ord("A"), 0,  # Device Model
             0, 0, 0, 0, 0, 0, 0, 0,  # Options N/A
             0, 0, 0, 0, 0, 0, 0, 0,  # Software Version  N/A
-            48, 48, 48, 48, 48, 48, 48, 49, 0, 0, 0, 0, 0, 0, 0, 0,  # Serial Number: 00000
+            ord(serial_number[0]), ord(serial_number[1]), ord(serial_number[2]), ord(serial_number[3]), ord(serial_number[4]), ord(serial_number[5]), ord(serial_number[6]), ord(serial_number[7]), 0, 0, 0, 0, 0, 0, 0, 0,  # Serial Number
             240],  # Modbus TCP Address
     40070: [213],
     40071: [124],
