@@ -11,12 +11,6 @@ https://www.photovoltaikforum.com/thread/185108-fronius-smart-meter-tcp-protokol
 ###############################################################
 # Import Libs
 ###############################################################
-from pymodbus.version import version
-from pymodbus.device import ModbusDeviceIdentification
-from pymodbus.datastore import ModbusSequentialDataBlock
-from pymodbus.datastore import ModbusSparseDataBlock
-from pymodbus.datastore import ModbusSlaveContext, ModbusServerContext
-from pymodbus.transaction import ModbusRtuFramer, ModbusAsciiFramer
 import threading
 import struct
 import time
@@ -27,15 +21,20 @@ import socket
 import signal
 import os
 
-from pymodbus.server import StartTcpServer
-
-from pymodbus.transaction import (
-    ModbusAsciiFramer,
-    ModbusBinaryFramer,
-    ModbusSocketFramer,
-    ModbusTlsFramer,
-)
 from pymodbus.version import version
+from pymodbus.device import ModbusDeviceIdentification
+from pymodbus.datastore import ModbusSequentialDataBlock
+from pymodbus.datastore import ModbusSparseDataBlock
+from pymodbus.datastore import ModbusSlaveContext
+from pymodbus.datastore import ModbusServerContext
+from pymodbus.server import StartTcpServer
+from pymodbus.transaction import ModbusAsciiFramer
+from pymodbus.transaction import ModbusBinaryFramer
+from pymodbus.transaction import ModbusSocketFramer
+from pymodbus.transaction import ModbusTlsFramer
+
+import paho.mqtt.client as mqtt
+import paho.mqtt.subscribe as subscribe
 
 ###############################################################
 # Timer Class
@@ -88,9 +87,6 @@ modbus_port = 502
 ###############################################################
 # MQTT service
 ###############################################################
-
-import paho.mqtt.client as mqtt
-import paho.mqtt.subscribe as subscribe
 
 lock = threading.Lock()
 
