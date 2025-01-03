@@ -353,7 +353,7 @@ lock.release()
 
 
 bind_address = ("", modbus_port)
-run_interval = 5
+run_interval = 2
 
 # continuously update the registers.
 update_context_timer = RepeatedTimer(run_interval, update_server_context, server_context)
