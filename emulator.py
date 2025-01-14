@@ -60,7 +60,15 @@ class RepeatedTimer(object):
 
 def mqtt_on_connect(client, userdata, flags, rc):
     global mqtt_connected
+    
     mqtt_connected = True
+    mqtt_client.subscribe(mqtt_topic_current_power)
+    mqtt_client.subscribe(mqtt_topic_current_power_l1)
+    mqtt_client.subscribe(mqtt_topic_current_power_l2)
+    mqtt_client.subscribe(mqtt_topic_current_power_l3)
+    mqtt_client.subscribe(mqtt_topic_total_import)
+    mqtt_client.subscribe(mqtt_topic_total_export)
+    
     print("MQTT connected.")
 
 
@@ -72,6 +80,9 @@ def mqtt_on_disconnect(client, userdata, rc):
 
 def mqtt_on_message(client, userdata, message):
     global current_power
+    global current_power_l1
+    global current_power_l2
+    global current_power_l3
     global total_export
     global total_import
     global last_message_received
@@ -89,9 +100,23 @@ def mqtt_on_message(client, userdata, message):
     if message.topic == mqtt_topic_current_power:
         current_power = converted_value
         last_message_received = datetime.datetime.now()
+
+    elif message.topic == mqtt_topic_current_power_l1:
+        current_power_l1 = converted_value
+        last_message_received = datetime.datetime.now()
+
+    elif message.topic == mqtt_topic_current_power_l2:
+        current_power_l2 = converted_value
+        last_message_received = datetime.datetime.now()
+
+    elif message.topic == mqtt_topic_current_power_l3:
+        current_power_l3 = converted_value
+        last_message_received = datetime.datetime.now()
+
     elif message.topic == mqtt_topic_total_import:
         total_import = converted_value
         last_message_received = datetime.datetime.now()
+
     elif message.topic == mqtt_topic_total_export:
         total_export = converted_value
         last_message_received = datetime.datetime.now()
@@ -123,10 +148,6 @@ def setup_mqtt():
         mqtt_client.username_pw_set(mqtt_username, mqtt_password)
 
     mqtt_client.connect(mqtt_host, mqtt_port, 60)
-
-    mqtt_client.subscribe(mqtt_topic_current_power)
-    mqtt_client.subscribe(mqtt_topic_total_import)
-    mqtt_client.subscribe(mqtt_topic_total_export)
 
     return mqtt_client
 
